@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive campus map for NJUPT Xianlin Campus — searchable POIs, multilingual support (EN/ZH), courier stations, dining, services, and more." />
+  <title>NJUPT Campus Map | 南京邮电大学仙林校区地图</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Emoji favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Loading Screen
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="loading-screen">
+  <div class="loader">
+    <div class="loader-ring"></div>
+    <p id="loading-text">Loading Campus Map…</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     App Container
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="app" class="app-container">
+
+  <!-- ─── Sidebar ──────────────────────────────────────────────────────────── -->
+  <aside id="sidebar" class="sidebar">
+
+    <!-- Header -->
+    <header class="sidebar-header">
+      <div class="logo-area">
+        <div class="logo-icon">🎓</div>
+        <div class="logo-text">
+          <h1 id="app-title">NJUPT Campus Map</h1>
+          <p  id="app-subtitle">Xianlin Campus · 仙林校区</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button id="lang-toggle"  class="btn-icon" title="切换语言 / Switch Language">
+          <span id="lang-label">中文</span>
+        </button>
+        <button id="theme-toggle" class="btn-icon" title="Toggle theme">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button id="sidebar-close" class="btn-icon sidebar-close-btn" title="Close menu">✕</button>
+      </div>
+    </header>
+
+    <!-- Search -->
+    <div class="search-container">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="search-input"
+               placeholder="Search buildings, services…"
+               autocomplete="off" spellcheck="false" />
+        <button id="search-clear" class="search-clear-btn" style="display:none"
+                aria-label="Clear search">✕</button>
+      </div>
+    </div>
+
+    <!-- Quick Views -->
+    <div class="quick-views">
+      <p class="section-label" id="label-quick-views">Quick Views</p>
+      <div class="quick-view-btns">
+        <button class="quick-view-btn active" data-view="all"         id="view-all">
+          <span>🗺️</span><span>All</span>
+        </button>
+        <button class="quick-view-btn"         data-view="new-student" id="view-new-student">
+          <span>🎒</span><span>New Student</span>
+        </button>
+        <button class="quick-view-btn"         data-view="daily"       id="view-daily">
+          <span>📅</span><span>Daily Life</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="filter-section">
+      <p class="section-label" id="label-categories">Categories</p>
+      <div id="category-filters" class="category-grid">
+        <!-- Injected by renderCategoryFilters() -->
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-section">
+      <div class="results-header">
+        <p class="section-label" id="label-locations">Locations</p>
+        <span id="results-count" class="results-count">0 places</span>
+      </div>
+      <div id="poi-list" class="poi-list" role="list">
+        <!-- Injected by renderPOIList() -->
+      </div>
+    </div>
+
+  </aside><!-- /sidebar -->
+
+  <!-- ─── Map Area ─────────────────────────────────────────────────────────── -->
+  <main class="map-area">
+
+    <!-- Mobile sidebar toggle -->
+    <button id="menu-toggle" class="menu-fab" aria-label="Open menu">☰</button>
+
+    <!-- Map control panel -->
+    <div class="map-controls" role="group" aria-label="Map controls">
+      <button id="btn-overlay" class="map-control-btn" title="Toggle campus map overlay">🗾</button>
+      <button id="btn-locate"  class="map-control-btn" title="Show my location">📍</button>
+      <button id="btn-reset"   class="map-control-btn" title="Reset map view">⌂</button>
+    </div>
+
+    <!-- Leaflet map -->
+    <div id="map" role="application" aria-label="Campus map"></div>
+
+    <!-- POI detail panel (slides up from bottom) -->
+    <div id="poi-detail" class="hidden" role="dialog" aria-modal="true" aria-label="Location detail">
+      <button id="detail-close" class="detail-close" aria-label="Close detail">✕</button>
+      <div class="detail-header">
+        <div class="detail-icon" id="detail-icon">📍</div>
+        <div>
+          <h2 id="detail-name"></h2>
+          <p  id="detail-name-sub"></p>
+          <p  id="detail-cat"></p>
+        </div>
+      </div>
+      <p  id="detail-desc"></p>
+      <div id="detail-tags" class="detail-tags"></div>
+    </div>
+
+  </main><!-- /map-area -->
+
+</div><!-- /app -->
+
+<!-- Scripts (order matters: data → i18n → app) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN2GGBg=" crossorigin=""></script>
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
