@@ -402,17 +402,19 @@ function updateStaticText() {
 function hideLoading() {
   const screen = document.getElementById('loading-screen');
   if (!screen) return;
-  const cleanup = () => { if (screen.parentNode) screen.remove(); };
   // Use rAF so the browser has painted the screen at opacity:1 before we
   // start the fade — without this the transition may never play and the
   // transitionend event would never fire.
   requestAnimationFrame(() => {
     screen.classList.add('fade-out');
-    screen.addEventListener('transitionend', cleanup, { once: true });
     // Fallback: force-remove after the transition duration + a small buffer
     // in case transitionend doesn't fire (e.g. prefers-reduced-motion, or
     // the element was never visible long enough to start a transition).
-    setTimeout(cleanup, 600);
+    const fallback = setTimeout(() => screen.remove(), 600);
+    screen.addEventListener('transitionend', () => {
+      clearTimeout(fallback);
+      screen.remove();
+    }, { once: true });
   });
 }
 
