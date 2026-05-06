@@ -29,12 +29,17 @@ const TILE_ATTR =
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loading-text').textContent = t('loading');
-  initMap();
-  initUI();
-  updateStaticText();     // set initial translated titles (incl. map-control buttons)
-  renderCategoryFilters();
-  applyFilter();          // renders list + markers
-  hideLoading();
+  try {
+    initMap();
+    initUI();
+    updateStaticText();     // set initial translated titles (incl. map-control buttons)
+    renderCategoryFilters();
+    applyFilter();          // renders list + markers
+  } catch (err) {
+    console.error('Initialization error:', err);
+  } finally {
+    hideLoading();
+  }
 });
 
 // ─── Map ─────────────────────────────────────────────────────────────────────
@@ -396,8 +401,19 @@ function updateStaticText() {
 // ─── Loading Screen ───────────────────────────────────────────────────────────
 function hideLoading() {
   const screen = document.getElementById('loading-screen');
-  screen.classList.add('fade-out');
-  screen.addEventListener('transitionend', () => screen.remove(), { once: true });
+  if (!screen) return;
+  const cleanup = () => { if (screen.parentNode) screen.remove(); };
+  // Use rAF so the browser has painted the screen at opacity:1 before we
+  // start the fade — without this the transition may never play and the
+  // transitionend event would never fire.
+  requestAnimationFrame(() => {
+    screen.classList.add('fade-out');
+    screen.addEventListener('transitionend', cleanup, { once: true });
+    // Fallback: force-remove after the transition duration + a small buffer
+    // in case transitionend doesn't fire (e.g. prefers-reduced-motion, or
+    // the element was never visible long enough to start a transition).
+    setTimeout(cleanup, 600);
+  });
 }
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
