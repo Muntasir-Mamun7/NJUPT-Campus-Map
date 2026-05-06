@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loading-text').textContent = t('loading');
   initMap();
   initUI();
+  updateStaticText();     // set initial translated titles (incl. map-control buttons)
   renderCategoryFilters();
   applyFilter();          // renders list + markers
   hideLoading();
@@ -336,11 +337,11 @@ function initUI() {
     if (map.hasLayer(imgOverlay)) {
       map.removeLayer(imgOverlay);
       btn.classList.add('active');
-      btn.title = 'Show campus map overlay';
+      btn.title = t('btn_overlay_show');
     } else {
       imgOverlay.addTo(map);
       btn.classList.remove('active');
-      btn.title = 'Hide campus map overlay';
+      btn.title = t('btn_overlay_hide');
     }
   });
 
@@ -375,7 +376,6 @@ function initUI() {
 
 // Update elements that hold translated static text
 function updateStaticText() {
-  const lang = getLang();
   document.getElementById('app-title').textContent       = t('app_title');
   document.getElementById('app-subtitle').textContent    = t('app_subtitle');
   document.getElementById('search-input').placeholder    = t('search_placeholder');
@@ -385,6 +385,12 @@ function updateStaticText() {
   document.getElementById('view-all').querySelector('span:last-child').textContent         = t('view_all');
   document.getElementById('view-new-student').querySelector('span:last-child').textContent = t('view_new_student');
   document.getElementById('view-daily').querySelector('span:last-child').textContent       = t('view_daily');
+
+  // Map control button titles
+  const overlayBtn = document.getElementById('btn-overlay');
+  overlayBtn.title = map.hasLayer(imgOverlay) ? t('btn_overlay_hide') : t('btn_overlay_show');
+  document.getElementById('btn-locate').title = t('btn_locate');
+  document.getElementById('btn-reset').title  = t('btn_reset');
 }
 
 // ─── Loading Screen ───────────────────────────────────────────────────────────

@@ -20,6 +20,10 @@ const I18N = {
     no_results_hint:        'Try a different search term',
     loading:                'Loading Campus Map…',
     detail_close:           'Close',
+    btn_overlay_hide:       'Hide campus map overlay',
+    btn_overlay_show:       'Show campus map overlay',
+    btn_locate:             'Show my location',
+    btn_reset:              'Reset map view',
     lang_switch:            '中文',
   },
   zh: {
@@ -38,6 +42,10 @@ const I18N = {
     no_results_hint:        '请尝试其他关键词',
     loading:                '正在加载校园地图…',
     detail_close:           '关闭',
+    btn_overlay_hide:       '隐藏校园地图叠加层',
+    btn_overlay_show:       '显示校园地图叠加层',
+    btn_locate:             '显示我的位置',
+    btn_reset:              '重置地图视图',
     lang_switch:            'English',
   },
 };

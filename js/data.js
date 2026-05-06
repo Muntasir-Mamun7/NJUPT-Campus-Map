@@ -219,10 +219,12 @@ const POIS = [
   },
   {
     id: 'canteen-north', category: 'food',
-    name_zh: '北食堂（南1/南2/南3食堂）', name_en: 'North Canteen (South 1 / 2 / 3)',
+    // The building is in the north area of campus; the individual canteens inside are
+    // officially named "South-1 / South-2 / South-3" (南1/南2/南3) by the university.
+    name_zh: '北区食堂大楼（内含南1/南2/南3食堂）', name_en: 'North Area Dining Hall (contains South-1 / 2 / 3 Canteens)',
     coords: [32.1160, 118.9082],
-    desc_en: 'Large dining complex with 3 canteens. Variety of Chinese, hot-pot, and grilled options. Halal section available.',
-    desc_zh: '大型食堂综合体，含3个分食堂（南1/南2/南3），提供中餐、火锅、烧烤等，设有清真专区。',
+    desc_en: 'Large dining complex in the north area of campus. Contains three canteens officially named South-1, South-2, and South-3. Chinese, hot-pot, and grilled options. Halal section available.',
+    desc_zh: '位于校区北部的大型食堂综合楼，内含南1、南2、南3三个食堂，提供中餐、火锅、烧烤等，设有清真专区。',
     tags_en: ['Food', 'Cafeteria', 'Halal', 'Large'],
     tags_zh: ['餐饮', '食堂', '清真', '大型'],
   },
